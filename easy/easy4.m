@@ -56,7 +56,7 @@ fid1 = fopen(ofile1,'rt');
 NoObs_types1 = size(Obs_types1,2)/2;
 % Next we include the rover and identify the rover
 % observation file and open it
-ofile2 = 'SITE247j.01O';
+ofile2 = 'SITE247J.01O';
 fid2 = fopen(ofile2,'rt');
 [Obs_types2, ant_delta2, ifound_types2, eof12] = anheader(ofile2);
 NoObs_types2 = size(Obs_types2,2)/2;
@@ -102,8 +102,6 @@ set(gca,'fontsize',16)
 legend
 
 print -deps easy4_2
-
-break 
 
 figure(3);
 plot(Gdop,'linewidth',2)

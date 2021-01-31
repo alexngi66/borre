@@ -23,7 +23,7 @@ NoObs_types1 = size(Obs_types1,2)/2;
 epochend = 22;
 
 % Next we include the rover observation file and open it
-ofile2 = 'SITE247j.01O';
+ofile2 = 'site247j.01o';
 fid2 = fopen(ofile2,'rt');
 [Obs_types2, ant_delta2, ifound_types2, eof12] = anheader(ofile2);
 NoObs_types2 = size(Obs_types2,2)/2;
@@ -117,7 +117,7 @@ legend
 
 print -deps easy8
 
-break
+return
 % Repair of clock reset of 1ms ~ 299 km; affects only pseudoranges
 i1 = find(abs(DP(1,:)) > 280000);
 

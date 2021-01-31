@@ -56,6 +56,8 @@ ierr      = 0;
 afixed = zeros(n,ncands);
 sqnorm = zeros(1,ncands);
 
+
+
 % ----------------------------------
 % --- Start the main search-loop ---
 % ----------------------------------
@@ -69,7 +71,7 @@ while ~ (endsearch);
    else
       lef(i) = 0;
       for j = i+1:n;
-         lef(i) = lef(i) + Linv(j,i)*dist(j,1);
+         lef(i) = lef(i) + Linv(j,i)*dist_l(j,1);
       end;
    end;
    iold = i;
@@ -77,9 +79,9 @@ while ~ (endsearch);
    right(i)  = (right(i+1) - left(i+1)) * dq(i);
    reach     = sqrt(right(i));
    delta     = afloat(i) - reach - lef(i);
-   dist(i,1) = ceil(delta) - afloat(i);
+   dist_l(i,1) = ceil(delta) - afloat(i);
    
-   if dist(i,1) > reach - lef(i)
+   if dist_l(i,1) > reach - lef(i)
 
 %     ----------------------------------------------------
 %     --- There is nothing at this level, so backtrack ---
@@ -91,9 +93,9 @@ while ~ (endsearch);
       while (~ c_stop) & (i < n);
       
          i = i + 1;
-         if dist(i) < endd(i);
-            dist(i) = dist(i) + 1;
-            left(i) = (dist(i) + lef(i)) ^ 2;
+         if dist_l(i) < endd(i);
+            dist_l(i) = dist_l(i) + 1;
+            left(i) = (dist_l(i) + lef(i)) ^ 2;
             c_stop = True;
             if i == n; cand_n = True; end;
          end;
@@ -109,7 +111,7 @@ while ~ (endsearch);
 %     ----------------------------
 
       endd(i) = reach - lef(i) - 1;
-      left(i) = (dist(i,1) + lef(i)) ^ 2;
+      left(i) = (dist_l(i,1) + lef(i)) ^ 2;
 
    end
 
@@ -125,26 +127,26 @@ while ~ (endsearch);
       t       = Chi2 - (right(1)-left(1)) * Dinv(1);
       endd(1) = endd(1) + 1;
       
-      while dist(1) <= endd(1);
+      while dist_l(1) <= endd(1);
 
          if ncan < ncands;
          
             ncan             = ncan + 1;
-            afixed(1:n,ncan) = dist + afloat;
+            afixed(1:n,ncan) = dist_l + afloat;
             sqnorm(ncan)     = t;
 
          else
          
             [maxnorm,ipos] = max(sqnorm);
             if t < maxnorm;
-               afixed(1:n,ipos) = dist + afloat;
+               afixed(1:n,ipos) = dist_l + afloat;
                sqnorm(ipos)     = t;
             end;
             
          end;
 
-         t       = t + (2 * (dist(1) + lef(1)) + 1) * Dinv(1);
-         dist(1) = dist(1) + 1;
+         t       = t + (2 * (dist_l(1) + lef(1)) + 1) * Dinv(1);
+         dist_l(1) = dist_l(1) + 1;
 
       end;
       
@@ -160,9 +162,9 @@ while ~ (endsearch);
 
          i = i + 1;
 
-         if dist(i) < endd(i);
-            dist(i) = dist(i) + 1;
-            left(i) = (dist(i) + lef(i)) ^ 2;
+         if dist_l(i) < endd(i);
+            dist_l(i) = dist_l(i) + 1;
+            left(i) = (dist_l(i) + lef(i)) ^ 2;
             c_stop = True;
             if i == n; cand_n = True; end;
          end;

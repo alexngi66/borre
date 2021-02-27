@@ -1,4 +1,4 @@
-% EASY10 plots ionospheric delay from phase observations.
+clear% EASY10 plots ionospheric delay from phase observations.
 %        The present code does not handle
 %   	 1. cycle slips, and
 %	     2. outliers.
@@ -67,7 +67,8 @@ figure(1);
 %                    .97 .33 .19];
 %axes('Colororder',colorordermatrix,'NextPlot','add');
 plot(1000*pd','linewidth',2)
-legend(eval('num2str(prn)'),2)
+legend(eval('num2str(prn)'),'location','NorthWest')
+
 title('Ionospheric Delay From {\itL}_1 and {\itL}_2 Phase','fontsize',16)
 ylabel('Ionospheric Delay  [mm]','fontsize',16)
 xlabel('Epochs  [1 s interval]','fontsize',16)
@@ -77,9 +78,9 @@ print -deps easy101
 
 %figure(2);
 %plot(1:300,fft(1000*pd'))
-for qq = 1:7
-    autocorr(1000*pd(qq,:)');
-end
+%for qq = 1:7
+%    autocorr(1000*pd(qq,:)');
+%end
 %print -deps easy102
 
 %%%%%%%%%%%%%%%%%%%%%% end easy10.m  %%%%%%%%%%%%%%%%%%%

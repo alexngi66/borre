@@ -469,9 +469,9 @@ set(get(gca,'Title'),'Position', ...
 % put the color scale up on the right hand side
 H = colorbar('vert');
 set(get(H,'Ylabel'),'String','{\fontsize{14pt}Number of Points per Pixel}');
-set(H,'YScale','log');
+%set(H,'YScale','log');
 set(H,'YLim',[z_lo_bnd z_up_bnd]);
-set(H,'CLim', [z_lo_bnd z_up_bnd]);
+%set(H,'CLim', [z_lo_bnd z_up_bnd]);
 
 if sec_available == 1
     display (['EGNOS differential for ', ...

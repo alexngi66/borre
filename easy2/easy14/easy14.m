@@ -1,14 +1,15 @@
-%EASY14   This script plots 5 figures:
+%EASY14   This script creates 5 plots:
 %    1 - position error in Easting and Northing (GPS only versus EGNOS corrected)
-%    2 - time series coordinate errors in Easting, Northing and Upping (GPS only vs EGNOS corrected)
+%    2 - time series coordinate errors in Easting, Northing, and Upping (GPS only vs EGNOS corrected)
 %    3 - Horizontal Stanford plot
-%    4 - Vertical   Stanford plot
+%    4 - Vertical Stanford plot
 %    5 - Number of satellites used to compute EGNOS corrected position, HPL and VPL
 %
 % Additionally some statistics will be computed for each set
 
 % written by Kostas Dragunas
 % last edited: 2008 12 20
+% modified for textbook 2010 02 16
 
 set(0,'DefaultTextFontName','Times');
 set(0,'DefaultAxesFontName','Times');
@@ -30,16 +31,15 @@ epoch_count = sprintf('%.2f hours',num_epoch/3600);
 
 % initialization
 rec_pos_UTM = zeros(num_epoch,6);
-HPL         = zeros(num_epoch,1);
-VPL         = zeros(num_epoch,1);
-sat_nr      = zeros(num_epoch,1);
+HPL = zeros(num_epoch,1);
+VPL = zeros(num_epoch,1);
+sat_nr = zeros(num_epoch,1);
 
-% get coordinate errors
-% for GPS only
+% get coordinate errors for GPS only
 rec_pos_UTM(:,1) = rec_pos_utm_gps(:,1)-ref_pos_UTM(1);
 rec_pos_UTM(:,2) = rec_pos_utm_gps(:,2)-ref_pos_UTM(2);
 rec_pos_UTM(:,3) = rec_pos_utm_gps(:,3)-ref_pos_UTM(3);
-% for EGNOS corrected
+% for EGNOS corrected coordinates
 rec_pos_UTM(:,4) = rec_pos_utm_egnos(:,1)-ref_pos_UTM(1);
 rec_pos_UTM(:,5) = rec_pos_utm_egnos(:,2)-ref_pos_UTM(2);
 rec_pos_UTM(:,6) = rec_pos_utm_egnos(:,3)-ref_pos_UTM(3);
@@ -56,27 +56,27 @@ for i=1:num_epoch
     sigmas_all = sigma_EGNOS_flt(i,index) + sigma_EGNOS_iono(i,index)...
                              + sigma_EGNOS_tropo(i,index) + sigma_EGNOS_air(i,index);
     % compute HPL and VPL
-    [HPL(i,1) cc VPL(i,1)] = SBAS_xPL(el_EGNOS(i,index),az_EGNOS(i,index),sigmas_all);
+    [HPL(i,1), ~, VPL(i,1)] = SBAS_xPL(el_EGNOS(i,index),az_EGNOS(i,index),sigmas_all);
 end
 
-% -------------------------  Plot figures -----------------------------------------   
+%  Plot figures    
 % get screen size parameters
 fullscreen = get(0,'ScreenSize');
 
-% ----------------------- Plot 1: Position error ----------------------------------
+%  Plot 1: Position error 
 % position plot
 % set figure name and position
 figure('Name',['1. Position error,  ' epoch_count],'NumberTitle','off','Position',[0 60 fullscreen(3) fullscreen(4)-150]);
 % plot GPS only receiver position
-plot(rec_pos_UTM(:,1),rec_pos_UTM(:,2),'k*');
+pl1 = plot(rec_pos_UTM(:,1),rec_pos_UTM(:,2),'k.'); %,'color',[.5 .5 .5]);
 hold on
 % plot EGNOS corrected receiver position
-plot(rec_pos_UTM(:,4),rec_pos_UTM(:,5),'r*');
+pl2 = plot(rec_pos_UTM(:,4),rec_pos_UTM(:,5),'r.'); %,'color',[.8 .8 .8]);
 % set axes labels, title and legend
 xlabel('East error [m]')
 ylabel('North error [m]')
 title(['Position error,  ' epoch_count])
-legend('GPS without correction','EGNOS corrected','Location','NorthEast','Orientation','horizontal')
+legend('without correction','using EGNOS') %,'Location','NorthEast','Orientation','horizontal')
 % set focus range
 xlim([-6 6])
 ylim([-6 6])
@@ -87,24 +87,24 @@ grid on
 set(gca,'XTick',[-6 -4 -2 -0 2 4 6]);
 set(gca,'YTick',[-6 -4 -2 -0 2 4 6]);
 hold off
+print -dpdf -bestfit easy141
 
-print -depsc2 easy14a
-
-% ----------------------- Plot 2: Position error versus time ----------------------------------
+%  Plot 2: Position error versus time 
 % time series plot
 % set figure name and position
 figure('Name',['2. Position error versus time, ' epoch_count],'NumberTitle','off','Position',[0 60 fullscreen(3) fullscreen(4)-150])
+
 % east 
 subplot(3,1,1)
 % GPS only
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,1),'k');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,1),'-.b'); %,'color',[.4 .4 .4]);
 hold on
 % EGNOS corrected
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,4),'r');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,4),'-r'); %,'color',[.9 .9 .9]);
 % set axes, labels, title, and legend
 title(['Position error versus time, ' epoch_count])
 ylabel('East error [m]')
-legend('GPS without correction','EGNOS corrected','Location','NorthEast','Orientation','horizontal')
+legend('without correction','including EGNOS')%,'Location','NorthEast','Orientation','horizontal')
 % set focus range
 ylim([-7 7])
 xlim([0 num_epoch])
@@ -118,10 +118,10 @@ hold off
 % north
 subplot(3,1,2)
 % GPS only
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,2),'k');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,2),'-.b'); %,'color',[.5 .5 .5]);
 hold on
 % EGNOS corrected
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,5),'r');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,5),'-r'); %,'color',[.8 .8 .8]);
 % set axes, labels
 ylabel('North error [m]')
 % set focus range
@@ -137,10 +137,10 @@ hold off
 % up
 subplot(3,1,3)
 % GPS only
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,3),'k');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,3),'-.b'); %,'color',[.5 .5 .5]);
 hold on
 % EGNOS corrected
-plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,6),'r');
+plot(1:size(rec_pos_UTM,1),rec_pos_UTM(:,6),'-r'); % ,'color',[.8 .8 .8]);
 % set axes, labels
 xlabel('Time [h]')
 ylabel('Up error [m]')
@@ -154,9 +154,9 @@ set(gca,'XTickLabel',{'0';'1h';'2h';'3h';'4h'});
 set(gca,'YTick',[0 5 10 15 20 25]);
 hold off
 
-print -depsc2 easy14b
+print -dpdf -bestfit easy142
 
-% ----------------------- Plot 3: Horizontal Stanford plot ----------------------------------
+%  Plot 3: Horizontal Stanford plot
 % time series plot
 % set figure name and position
 figure('Name',['3. Horizontal Stanford plot - ' epoch_count],'NumberTitle','off','Position',[0 60 fullscreen(3) fullscreen(4)-150]);
@@ -164,11 +164,13 @@ figure('Name',['3. Horizontal Stanford plot - ' epoch_count],'NumberTitle','off'
 hplstat(HPL',HPE,HAL,'EGNOS');
 % make x and y axis equal
 set(gca,'DataAspectRatio',[10 10 10]);
+%colormap([.5 .5 .5])
 hold off
+colormap(gray)
 
-print -depsc2 easy14c
+print -dpdf -bestfit easy143
 
-% ----------------------- Plot 4: Vertical Stanford plot ----------------------------------
+%  Plot 4: Vertical Stanford plot 
 % set figure name and position
 figure('Name',['4. Vertical Stanford plot - ' epoch_count],'NumberTitle','off','Position',[0 60 fullscreen(3) fullscreen(4)-150]);
 % the function will do all the plotting 
@@ -176,10 +178,13 @@ vplstat(VPL',VPE,VAL1,VAL2,'EGNOS');
 % make x and y axis equal
 set(gca,'DataAspectRatio',[10 10 10]);
 hold off
+%colormap([.5 .5 .5])
+colormap(gray)
 
-print -depsc2 easy14d
+print -dpdf -bestfit easy144
 
-% ----------------------- Plot 5: Number of satellites used for position computation -----------
+
+% Plot 5: Number of satellites used for position computation 
 % set figure name and position
 figure('Name',['5. Number of satellites used - ' epoch_count],'NumberTitle','off','Position',[0 60 fullscreen(3) fullscreen(4)-150])
 plot(1:size(sat_nr,1),sat_nr,'b');
@@ -196,7 +201,7 @@ set(gca,'XTick',[0 3600 7200 10800 14400]);
 set(gca,'XTickLabel',{'0';'1h';'2h';'3h';'4h'});
 set(gca,'YTick',[0 5 7 9 11]);
 
-% --------------------------------------- end of plotting -------------------------------------  
+  
 
 % print some statistics
 fprintf('-------------------------------- Data: %s -----------------------------------\n',epoch_count);
@@ -242,4 +247,4 @@ clear EGNOS_CEP1 EGNOS_CEP2 EGNOS_DRMS1 EGNOS_DRMS2 EGNOS_std EGNOS_east EGNOS_n
 clear HAL VAL VPL HPL HPE VPE VAL1 VAL2 HAL
 clear cc epoch_count i index num_epoch rec_pos_UTM sat_nr sigmas_all fullscreen
 
-%%%%%%%%%%%%%%%%%%%%%%  end easy14.m  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%  end easy14.m  %%%%%%%%%

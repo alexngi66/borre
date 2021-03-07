@@ -631,9 +631,9 @@ text(0.9*(x_up_bnd - x_lo_bnd) + x_lo_bnd, sig_bnd_999, z_up_bnd, '99.9%');
 % put the color scale up on the right hand side
 H = colorbar('vert');
 set(get(H,'Ylabel'),'String','{\fontsize{14pt}Number of Points per Pixel}');
-set(H,'YScale','log');
+% set(H,'YScale','log');
 set(H,'YLim',[z_lo_bnd z_up_bnd]);
-set(H,'CLim', [z_lo_bnd z_up_bnd]);
+% set(H,'CLim', [z_lo_bnd z_up_bnd]);
 
 if sec_available == 1
     display (['EGNOS diff for ', ...
